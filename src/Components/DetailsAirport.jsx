@@ -24,7 +24,7 @@ const style = {
   height: 600,
 };
 
-const DetailsAirport = ({ id, name }) => {
+const DetailsAirport = ({ id, name, location }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -84,7 +84,7 @@ const DetailsAirport = ({ id, name }) => {
             component="h2"
             sx={{ textAlign: "center" }}
           >
-            {name}
+            {name} ở {location}
           </Typography>
           <div id="modal-modal-description" sx={{ mt: 2 }}>
             <div className="columns-2 flex justify-between">
@@ -119,6 +119,16 @@ const DetailsAirport = ({ id, name }) => {
                       >
                         Thời gian bay
                       </TableCell>
+                      <TableCell
+                        style={{
+                          backgroundColor: "black",
+                          color: "white",
+                          textTransform: "uppercase",
+                          fontSize: "16px",
+                        }}
+                      >
+                        Chi phí bay
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -136,6 +146,12 @@ const DetailsAirport = ({ id, name }) => {
                           )}
                           <TableCell style={{ fontSize: "16px" }}>
                             {convertToTime(a.estimateTime)}
+                          </TableCell>
+                          <TableCell style={{ fontSize: "16px" }}>
+                            {new Intl.NumberFormat()
+                              .format(a.price)
+                              .replaceAll(",", ".")}
+                            <span> vnd</span>
                           </TableCell>
                         </TableRow>
                       );

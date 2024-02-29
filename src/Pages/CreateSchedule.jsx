@@ -298,7 +298,7 @@ const CreateSchedule = () => {
               />
             </DemoContainer>
           </LocalizationProvider>
-          {message}
+          <div className="relative">{message}</div>
           <div className="mt-8">
             <button
               className="bg-black hover:bg-gray-700 text-white font-bold py-2 px-5 rounded uppercase mt-4 transition-all"

@@ -31,10 +31,11 @@ export const getPlaneList = async (id) => {
   }
 };
 
-export const addAirport = async (name) => {
+export const addAirport = async (name, location) => {
   try {
     const response = await API.post("/api/public/airport/add", {
       airportName: name,
+      location: location,
     });
     return response.data;
   } catch (error) {
@@ -42,12 +43,13 @@ export const addAirport = async (name) => {
   }
 };
 
-export const addFlightTime = async (fromId, toId, estimateTime) => {
+export const addFlightTime = async (fromId, toId, estimateTime, price) => {
   try {
     const response = await API.post("/api/public/flighttime/add", {
       from: fromId,
       to: toId,
       estimateTime: estimateTime,
+      price: price,
     });
     return response.data;
   } catch (error) {
@@ -67,13 +69,11 @@ export const getListAirportNoFlightTime = async (id) => {
   }
 };
 
-
 export const activeAirport = async (id) => {
   try {
-    const response = await API.get(
-      "/api/public/airport/active",
-      { params: { id: id } }
-    );
+    const response = await API.get("/api/public/airport/active", {
+      params: { id: id },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -82,10 +82,9 @@ export const activeAirport = async (id) => {
 
 export const deActiveAirport = async (id) => {
   try {
-    const response = await API.get(
-      "/api/public/airport/deactive",
-      { params: { id: id } }
-    );
+    const response = await API.get("/api/public/airport/deactive", {
+      params: { id: id },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

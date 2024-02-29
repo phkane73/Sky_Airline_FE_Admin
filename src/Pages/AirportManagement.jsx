@@ -19,12 +19,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Search from "../Components/Search";
 
 export default function AirportManagement() {
+  const [data, setData] = useState([]);
   const [listAirport, setListAirport] = useState([]);
   const [render, setRender] = useState(false);
   const [open, setOpen] = useState(false);
-  const [total, setTotal] = useState(0)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,8 +38,9 @@ export default function AirportManagement() {
   useEffect(() => {
     async function fetchData() {
       const data = await getAllAirport();
+      setData(data);
       setListAirport(data);
-      setTotal(data.length)
+      console.log(data);
     }
     fetchData();
   }, [render]);
@@ -62,10 +64,22 @@ export default function AirportManagement() {
     setRender(!render);
   };
 
+  const handleSearch = (query) => {
+    const filteredDate = query
+      ? listAirport.filter((item) =>
+          item.airportName.toLowerCase().includes(query.toLowerCase())
+        )
+      : data;
+    setListAirport(filteredDate);
+  };
+
   return (
     <div className="px-10 py-3">
       <h1 className="text-center text-3xl font-bold">DANH SÁCH SÂN BAY</h1>
-      <AddAirport onChildChange={handleChildChange} />
+      <div className="flex justify-between items-center">
+        <AddAirport onChildChange={handleChildChange} />
+        <Search onSearch={handleSearch} />
+      </div>
       <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>
         <Table sx={{ maxWidth: 1200 }} stickyHeader aria-label="sticky table">
           <TableHead>
@@ -151,7 +165,7 @@ export default function AirportManagement() {
                         <DetailsAirport
                           id={airport.id}
                           name={airport.airportName}
-                          operation={airport.operation}
+                          location={airport.location}
                         />
                       </>
                     ) : (
@@ -159,7 +173,6 @@ export default function AirportManagement() {
                         onChildChange={handleChildChange}
                         id={airport.id}
                         name={airport.airportName}
-                        operation={airport.operation}
                       />
                     )}
                   </TableCell>
@@ -223,7 +236,7 @@ export default function AirportManagement() {
           </TableBody>
         </Table>
       </TableContainer>
-      <h4 className="mt-2">Total: {total}</h4>
+      <h4 className="mt-2">Total: {listAirport.length}</h4>
     </div>
   );
 }

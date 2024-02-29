@@ -22,14 +22,14 @@ export default function AddAirport({ onChildChange }) {
   const [message, setMessage] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setMessage('');
+    setMessage("");
     setFormData({});
     setOpen(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = await addAirport(formData.airportName);
+    const data = await addAirport(formData.airportName, formData.location);
     if (data) {
       setMessage(
         <span className="text-green-600">Thêm sân bay thành công!</span>
@@ -76,6 +76,18 @@ export default function AddAirport({ onChildChange }) {
                   label="Nhập tên sân bay"
                   variant="filled"
                   value={formData.airportName}
+                  sx={{ width: "100%" }}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="relative z-0 w-full mb-1 group mt-4">
+                <TextField
+                  required
+                  id="location"
+                  name="location"
+                  label="Đặt tại vị trí"
+                  variant="filled"
+                  value={formData.location}
                   sx={{ width: "100%" }}
                   onChange={handleInputChange}
                 />

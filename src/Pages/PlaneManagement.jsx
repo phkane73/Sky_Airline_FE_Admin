@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AddPlane from "../Components/AddPlane";
+import Search from "../Components/Search";
 import {
   getAllPlane,
   activePlane,
@@ -14,15 +15,16 @@ import {
 } from "../Services/PlaneServices";
 
 const PlaneManagement = () => {
+  const [data, setData] = useState([]);
   const [listPlane, setListPlane] = useState([]);
-  const [total, setTotal] = useState(0);
   const [render, setRender] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       const data = await getAllPlane();
+      setData(data);
       setListPlane(data);
-      setTotal(data.length);
+      console.log(data);
     }
     fetchData();
   }, [render]);
@@ -37,10 +39,26 @@ const PlaneManagement = () => {
     setRender(!render);
   }
 
+  const handleSearch = (query) => {
+    const filteredDate = query
+      ? listPlane.filter(
+          (item) =>
+            item.planeName.toLowerCase().includes(query.toLowerCase()) ||
+            item.onAirport.airportName
+              .toLowerCase()
+              .includes(query.toLowerCase())
+        )
+      : data;
+    setListPlane(filteredDate);
+  };
+
   return (
     <div className="px-10 py-3">
       <h1 className="text-center text-3xl font-bold">DANH SÁCH MÁY BAY</h1>
-      <AddPlane />
+      <div className="flex justify-between items-center">
+        <AddPlane />
+        <Search onSearch={handleSearch} />
+      </div>
       <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>
         <Table sx={{ maxWidth: 1200 }} stickyHeader aria-label="sticky table">
           <TableHead>
@@ -142,7 +160,7 @@ const PlaneManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <h4 className="mt-2">Total: {total}</h4>
+      <h4 className="mt-2">Total: {listPlane.length}</h4>
     </div>
   );
 };

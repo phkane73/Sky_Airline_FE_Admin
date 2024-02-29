@@ -6,6 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
+import { NumericFormat } from "react-number-format";
 import {
   getListAirportNoFlightTime,
   addFlightTime,
@@ -22,6 +23,30 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
+  props,
+  ref
+) {
+  const { onChange, ...other } = props;
+
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={ref}
+      onValueChange={(values) => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        });
+      }}
+      valueIsNumericString
+      thousandSeparator
+    />
+  );
+});
 
 export default function UpdateFlightTime({ id, name, onChildChange }) {
   const [open, setOpen] = useState(false);
@@ -52,7 +77,8 @@ export default function UpdateFlightTime({ id, name, onChildChange }) {
     const data = await addFlightTime(
       id,
       formData.airport,
-      parseInt(formData.hour) + parseFloat((formData.minute / 60).toFixed(2))
+      parseInt(formData.hour) + parseFloat((formData.minute / 60).toFixed(2)),
+      formData.price
     );
     onChildChange();
     setMessage(data);
@@ -110,6 +136,21 @@ export default function UpdateFlightTime({ id, name, onChildChange }) {
                   })}
                 </Select>
               </FormControl>
+              <div className="relative z-0 w-full mb-4 group">
+                <TextField
+                  required
+                  id="price"
+                  name="price"
+                  label="Chi phí bay"
+                  variant="filled"
+                  value={formData.price}
+                  sx={{ width: "100%" }}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    inputComponent: NumericFormatCustom,
+                  }}
+                />
+              </div>
               <div className="flex w-100">
                 <div className="relative z-0 w-full mb-1 group mr-2">
                   <TextField
