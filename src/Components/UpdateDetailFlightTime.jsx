@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import { addAirport } from "../Services/AirportServices";
+import { updatePrice } from "../Services/AirportServices";
+import { NumericFormat } from "react-number-format";
+import EditIcon from "@mui/icons-material/Edit";
 
 const style = {
   position: "absolute",
@@ -16,27 +18,53 @@ const style = {
   p: 4,
 };
 
-export default function AddAirport({ onChildChange }) {
+const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
+  props,
+  ref
+) {
+  const { onChange, ...other } = props;
+
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={ref}
+      onValueChange={(values) => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        });
+      }}
+      valueIsNumericString
+      thousandSeparator
+    />
+  );
+});
+
+export default function UpdateDetailFlightTime({ id, price, onChildChange }) {
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    price: price,
+  });
   const [message, setMessage] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setMessage("");
-    setFormData({});
+    setFormData({ price: price });
     setOpen(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = await addAirport(formData.airportName, formData.location);
+    const data = await updatePrice(id, formData.price);
     if (data) {
       setMessage(
-        <span className="text-green-600">Thêm sân bay thành công!</span>
+        <span className="text-green-600">Cập nhật giá mới thành công!</span>
       );
       onChildChange();
     } else {
-      setMessage(<span className="text-red-600">Sân bay đã tồn tại!</span>);
+      setMessage(<span className="text-red-600">Vui lòng nhập đúng giá!</span>);
     }
   };
 
@@ -49,15 +77,14 @@ export default function AddAirport({ onChildChange }) {
   };
 
   return (
-    <div>
+    <div className="inline-block ml-3">
       <button
-        className="bg-black hover:bg-gray-700 text-white font-bold py-2 px-5 rounded uppercase mb-1 transition-all float-end"
+        className="text-blue-700"
         onClick={() => {
           handleOpen();
         }}
       >
-        <i className="fa-solid fa-plus mr-2"></i>
-        Thêm sân bay
+        <EditIcon />
       </button>
       <Modal
         open={open}
@@ -68,39 +95,30 @@ export default function AddAirport({ onChildChange }) {
         <Box sx={style}>
           <div>
             <h1 className="text-center text-xl mb-2 uppercase">
-              Thêm sân bay mới
+              Điều chỉnh giá tuyến bay
             </h1>
             <form onSubmit={handleSubmit}>
-              <div className="relative z-0 w-full mb-1 group">
+              <div className="relative z-0 w-full mb-4 group">
                 <TextField
                   required
-                  id="airportName"
-                  name="airportName"
-                  label="Nhập tên sân bay"
+                  id="price"
+                  name="price"
+                  label="Chi phí bay"
                   variant="filled"
-                  value={formData.airportName}
+                  value={formData.price}
                   sx={{ width: "100%" }}
                   onChange={handleInputChange}
-                />
-              </div>
-              <div className="relative z-0 w-full mb-1 group mt-4">
-                <TextField
-                  required
-                  id="location"
-                  name="location"
-                  label="Đặt tại vị trí"
-                  variant="filled"
-                  value={formData.location}
-                  sx={{ width: "100%" }}
-                  onChange={handleInputChange}
+                  InputProps={{
+                    inputComponent: NumericFormatCustom,
+                  }}
                 />
               </div>
               {message}
               <button
-                className="bg-black hover:bg-gray-700 text-white font-bold py-2 px-5 rounded uppercase mt-4 transition-all float-end"
-                type="submit"
+                className="bg-black hover:bg-gray-700 text-white font-bold py-2 px-5 rounded uppercase transition-all float-end"
+                onClick={handleSubmit}
               >
-                Thêm
+                Sửa
               </button>
             </form>
           </div>

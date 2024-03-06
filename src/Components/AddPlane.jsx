@@ -21,7 +21,7 @@ const style = {
   p: 4,
 };
 
-export default function AddPlane() {
+export default function AddPlane({ onChildChange }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     planeName: "",
@@ -31,7 +31,7 @@ export default function AddPlane() {
   const [message, setMessage] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setMessage('');
+    setMessage("");
     setFormData({});
     setOpen(false);
   };
@@ -43,6 +43,7 @@ export default function AddPlane() {
       setMessage(
         <span className="text-green-600">Thêm Máy bay thành công!</span>
       );
+      onChildChange();
     } else {
       setMessage(<span className="text-red-600">Máy bay đã tồn tại!</span>);
     }
@@ -83,6 +84,9 @@ export default function AddPlane() {
       >
         <Box sx={style}>
           <div>
+            <h1 className="text-center text-xl mb-2 uppercase">
+              Thêm máy bay mới
+            </h1>
             <form onSubmit={handleSubmit}>
               <div className="relative z-0 w-full mb-1 group">
                 <TextField

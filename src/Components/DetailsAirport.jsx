@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getInfoAirport, getPlaneList } from "../Services/AirportServices";
+import {
+  getInfoAirport,
+  getPlaneList,
+  deleteFlightTime,
+} from "../Services/AirportServices";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -10,13 +14,18 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import UpdateDetailFlightTime from "./UpdateDetailFlightTime";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 810,
+  width: 900,
   bgcolor: "background.paper",
   boxShadow: 24,
   border: "2px solid #000",
@@ -24,19 +33,23 @@ const style = {
   height: 600,
 };
 
-const DetailsAirport = ({ id, name, location }) => {
+const DetailsAirport = ({ id, name, location, load }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
   const [airports, setAirports] = useState([]);
   const [planeList, setPlaneList] = useState([]);
+  const [render, setRender] = useState(false);
   useEffect(() => {
     async function fetchData() {
       const data = await getInfoAirport(id);
       setAirports(data);
     }
     fetchData();
-  }, [id]);
+  }, [id, render, load]);
 
   useEffect(() => {
     async function fetchData() {
@@ -61,6 +74,16 @@ const DetailsAirport = ({ id, name, location }) => {
     );
   };
 
+  const handleChildChange = () => {
+    setRender(!render);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteFlightTime(id);
+    setOpenDialog(false);
+    setRender(!render);
+  };
+
   return (
     <div>
       <button
@@ -82,7 +105,7 @@ const DetailsAirport = ({ id, name, location }) => {
             id="modal-modal-title"
             variant="h5"
             component="h2"
-            sx={{ textAlign: "center" }}
+            sx={{ textAlign: "center", marginBottom: 3 }}
           >
             {name} ở {location}
           </Typography>
@@ -90,10 +113,10 @@ const DetailsAirport = ({ id, name, location }) => {
             <div className="columns-2 flex justify-between">
               <TableContainer
                 component={Paper}
-                sx={{ maxHeight: 500, maxWidth: 500 }}
+                sx={{ maxHeight: 500, maxWidth: 600 }}
               >
                 <Table
-                  sx={{ maxWidth: 500 }}
+                  sx={{ maxWidth: 600 }}
                   stickyHeader
                   aria-label="sticky table"
                 >
@@ -129,6 +152,14 @@ const DetailsAirport = ({ id, name, location }) => {
                       >
                         Chi phí bay
                       </TableCell>
+                      <TableCell
+                        style={{
+                          backgroundColor: "black",
+                          color: "white",
+                          textTransform: "uppercase",
+                          fontSize: "16px",
+                        }}
+                      ></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -152,6 +183,45 @@ const DetailsAirport = ({ id, name, location }) => {
                               .format(a.price)
                               .replaceAll(",", ".")}
                             <span> vnd</span>
+                            <UpdateDetailFlightTime
+                              id={a.id}
+                              price={a.price}
+                              onChildChange={handleChildChange}
+                            />
+                          </TableCell>
+                          <TableCell style={{ textAlign: "center" }}>
+                            <button onClick={handleOpenDialog}>
+                              <DeleteForeverIcon
+                                style={{ fontSize: "30px", color: "red" }}
+                              />
+                            </button>
+                            <Dialog
+                              open={openDialog}
+                              onClose={handleCloseDialog}
+                              aria-labelledby="alert-dialog-title"
+                              aria-describedby="alert-dialog-description"
+                            >
+                              <DialogTitle id="alert-dialog-title">
+                                {
+                                  "Bạn có chắc chắn muốn xóa tuyến đường bay này!!"
+                                }
+                              </DialogTitle>
+                              <DialogActions>
+                                <button
+                                  className="bg-red-700 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
+                                  onClick={handleCloseDialog}
+                                >
+                                  Thoát
+                                </button>
+
+                                <button
+                                  className="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 ml-2 px-4 rounded transition-all"
+                                  onClick={() => handleDelete(a.id)}
+                                >
+                                  Xác nhận xóa
+                                </button>
+                              </DialogActions>
+                            </Dialog>
                           </TableCell>
                         </TableRow>
                       );

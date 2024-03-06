@@ -6,12 +6,12 @@ import Grid from "@mui/material/Grid";
 const DefaultLayout = ({ children }) => {
   return (
     <div>
+      <Header />
       <Grid container>
         <Grid item md={2}>
           <Sidebar />
         </Grid>
         <Grid item md={10}>
-          <Header />
           {children}
         </Grid>
       </Grid>

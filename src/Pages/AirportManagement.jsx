@@ -39,7 +39,14 @@ export default function AirportManagement() {
     async function fetchData() {
       const data = await getAllAirport();
       setData(data);
-      setListAirport(data);
+      setListAirport(
+        data.sort((a, b) => {
+          if (a.operation && !b.operation) {
+            return -1;
+          }
+          return 1;
+        })
+      );
       console.log(data);
     }
     fetchData();
@@ -166,6 +173,7 @@ export default function AirportManagement() {
                           id={airport.id}
                           name={airport.airportName}
                           location={airport.location}
+                          load={render}
                         />
                       </>
                     ) : (

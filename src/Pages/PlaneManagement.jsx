@@ -23,8 +23,14 @@ const PlaneManagement = () => {
     async function fetchData() {
       const data = await getAllPlane();
       setData(data);
-      setListPlane(data);
-      console.log(data);
+      setListPlane(
+        data.sort((a, b) => {
+          if (a.operation && !b.operation) {
+            return -1;
+          }
+          return 1;
+        })
+      );
     }
     fetchData();
   }, [render]);
@@ -52,11 +58,15 @@ const PlaneManagement = () => {
     setListPlane(filteredDate);
   };
 
+  const handleChildChange = () => {
+    setRender(!render);
+  };
+
   return (
     <div className="px-10 py-3">
       <h1 className="text-center text-3xl font-bold">DANH SÁCH MÁY BAY</h1>
       <div className="flex justify-between items-center">
-        <AddPlane />
+        <AddPlane onChildChange={handleChildChange} />
         <Search onSearch={handleSearch} />
       </div>
       <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>

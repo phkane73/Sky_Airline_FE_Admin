@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-import Button from "@mui/material/Button";
+import CloseIcon from "@mui/icons-material/Close";
 const Search = ({ onSearch }) => {
   const [query, setQuery] = useState("");
 
@@ -16,7 +16,7 @@ const Search = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center mb-2">
       <TextField
         value={query}
         id="filled-basic"
@@ -27,14 +27,13 @@ const Search = ({ onSearch }) => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Button
+              <CloseIcon
                 variant="outlined"
                 onClick={() => {
                   setQuery("");
                 }}
-              >
-                X
-              </Button>
+                style={{ cursor: "pointer" }}
+              ></CloseIcon>
             </InputAdornment>
           ),
         }}

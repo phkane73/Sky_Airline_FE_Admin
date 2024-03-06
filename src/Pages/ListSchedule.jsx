@@ -19,6 +19,13 @@ const ListSchedule = () => {
       if (data) {
         setData(data);
         setListSchedule(data);
+        console.log(data);
+        var i = 0;
+        data[2].seatDetails.map((d) => {
+          if (d.seat.ticketClass.className === "BUSINESS") {
+            console.log(d.seat.ticketClass.className);
+          }
+        });
       }
     }
     fetchData();
@@ -29,8 +36,8 @@ const ListSchedule = () => {
       ? listSchedules.filter(
           (item) =>
             item.flightCode.toLowerCase().includes(query.toLowerCase()) ||
-            item.departureTime.toLowerCase().includes(query.toLowerCase()) ||
-            item.arrivalTime.toLowerCase().includes(query.toLowerCase()) ||
+            item.departureTime.includes(query) ||
+            item.arrivalTime.includes(query) ||
             item.planeName.toLowerCase().includes(query.toLowerCase()) ||
             item.departureAirport.airportName
               .toLowerCase()
@@ -49,7 +56,7 @@ const ListSchedule = () => {
         <h1 className="text-3xl font-bold my-5">DANH SÁCH CÁC CHUYẾN BAY</h1>
         <Search onSearch={handleSearch} />
       </div>
-      <TableContainer component={Paper} sx={{ maxHeight: 480, maxWidth: 1200 }}>
+      <TableContainer component={Paper} sx={{ maxHeight: 485, maxWidth: 1200 }}>
         <Table sx={{ maxWidth: 1200 }} stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -113,16 +120,6 @@ const ListSchedule = () => {
               >
                 Giờ đến
               </TableCell>
-              <TableCell
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  textTransform: "uppercase",
-                  fontSize: "16px",
-                }}
-              >
-                Chi phí
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -135,19 +132,13 @@ const ListSchedule = () => {
                   <TableCell>{s.arrivalAirport.airportName}</TableCell>
                   <TableCell>{s.departureTime}</TableCell>
                   <TableCell>{s.arrivalTime}</TableCell>
-                  <TableCell>
-                    {new Intl.NumberFormat()
-                      .format(s.price)
-                      .replaceAll(",", ".")}
-                    <span> vnd</span>
-                  </TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
       </TableContainer>
-      <h4 className="mt-2">Total: {listSchedules.length}</h4>
+      <h4 className="mt-4">Total: {listSchedules.length}</h4>
     </div>
   );
 };

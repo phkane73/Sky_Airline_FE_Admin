@@ -90,3 +90,27 @@ export const deActiveAirport = async (id) => {
     console.error("Error fetching data:", error);
   }
 };
+
+export const updatePrice = async (id, price) => {
+  try {
+    const response = await API.post("/api/public/airport/updateprice", {
+      id: id,
+      price: price,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const deleteFlightTime = async (id) => {
+  try {
+    await API.delete("/api/public/airport/deleteflighttime", {
+      params: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
